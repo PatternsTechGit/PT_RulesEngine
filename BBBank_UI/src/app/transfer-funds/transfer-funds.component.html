@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="col-12 col-sm-6">
+
+        <div class="card card-user">
+            <div class="card-body">
+                <div class="author">
+                    <div class="block block-one"></div>
+                    <div class="block block-two"></div>
+                    <div class="block block-three"></div>
+                    <div class="block block-four"></div>
+
+                    <img alt="..." class="avatar" src="{{fromAccount?.userImageUrl}}" />
+                    <h5 class="title">{{fromAccount.accountTitle}}</h5>
+                    <p class="account-number"> {{fromAccount.accountNumber}}</p>
+                    <p class="balance">Balance: <b>{{fromAccount.currentBalance | currency}}</b> <span
+                            *ngIf="fromAccount?.accountStatus === 'Active'"
+                            class="account-status active">Active</span><span
+                            *ngIf="fromAccount?.accountStatus === 'InActive'"
+                            class="account-status inactive">Inactive</span></p>
+
+                    <div class="amount-cont">
+                        <div class="form-row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-8 my-1">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend" style="margin-left: 50%">
+                                        <div class="input-group-text">$</div>
+                                    </div>
+                                    <input type="number" [(ngModel)]="amount" class="form-control align-self-center"
+                                        id="depositAmount" placeholder="Transfer Amount">
+                                </div>
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="amount-cont">
+                        <div class="form-row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-8 my-1">
+                                <input type="text" [(ngModel)]="fromAccount.accountNumber"
+                                    style="margin-left: 50%; width: 240px;" class="form-control"
+                                    id="fromAccountNumber" placeholder="From Account ID">
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-description">&nbsp;</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-12 col-sm-6">
+
+        <div class="card card-user">
+            <div class="card-body">
+                <div class="author">
+                    <div class="block block-one"></div>
+                    <div class="block block-two"></div>
+                    <div class="block block-three"></div>
+                    <div class="block block-four"></div>
+
+                    <img alt="..." class="avatar" src="{{toAccount?.userImageUrl}}" />
+                    <h5 class="title">{{toAccount?.accountTitle}}</h5>
+                    <p class="account-number">{{toAccount?.accountNumber}}</p>
+                    <p class="balance">Balance: <b>{{toAccount.currentBalance | currency}}</b> <span
+                            *ngIf="toAccount?.accountStatus === 'Active'"
+                            class="account-status active">Active</span><span
+                            *ngIf="toAccount?.accountStatus === 'InActive'"
+                            class="account-status inactive">Inactive</span></p>
+                    <div class="amount-cont">
+                        <div class="form-row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-8 my-1">
+                                <input type="text" [(ngModel)]="toAccount.accountNumber"
+                                    style="margin-left: 50%; width: 240px;" class="form-control"
+                                    id="depositAccountNumber" placeholder="To Account ID" (focusout)="getToAccount()">
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">&nbsp;</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="error-message">
+            <p class="text-warning">
+                {{message}}
+            </p>
+        </div>
+
+        <br>
+
+
+        <div class="row">
+            <div class="col-sm-6 mb-3">
+                <button class="btn btn-cancel btn-block" (click)="initialize()"
+                    style="width: 30%;margin-left: 70%;">Cancel</button>
+            </div>
+            <div class="col-sm-6 mb-3">
+                <button class="btn btn-danger btn-block" (click)="transfer()" style="width: 30%">Transfer</button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,36 @@
+[
+  {
+    // Name of workflow
+    "WorkflowName": "TransferRules",
+    //Multiple rules under one workflow
+    "Rules": [
+      {
+        "RuleName": "FromAccountIsActiveWithSufficentBalance",
+        "SuccessEvent": "10",
+        "ErrorMessage": "From Account Does not Exists or is not active or does not have sufficent balance or have invalid amount.",
+        "ErrorType": "Error",
+        "RuleExpressionType": "LambdaExpression",
+        "Expression": "Eval_TransferRules.FromAccountIsActiveWithSufficentBalance(input1.AccountFromId,input1.Amount, input2) == true",
+        //"Actions": {
+        //  "OnSuccess": {
+        //    //Function that contains logic in the case of rule gets applied
+        //    "Name": "PostEval_EventTypeExceed", //Name context
+        //    "Context": { //These params are passed to the functions with the logc after evaluation.
+        //      "NameofRule": "EventTypeExceedInLastxHrs",
+        //      "Severity": 1,
+        //      "Description": "Message From Rules Engine"
+        //    }
+        //  }
+
+        },
+        {
+          "RuleName": "ToAccountIsActive",
+          "SuccessEvent": "10",
+          "ErrorMessage": "To Account Does not exists or is not Active",
+          "ErrorType": "Error",
+          "RuleExpressionType": "LambdaExpression",
+          "Expression": "Eval_TransferRules.ToAccountIsActive(input1.AccountToId, input2) == true"
+        }
+    ]
+  }
+]
