@@ -61,11 +61,10 @@ We will implement Rules Engine and the code base will include both front-end and
 * Add a **new method TransferFunds in transaction service and its contract** 
 * Add a **new JSON file `BBBankRules.json`** in BBBankAPI 
 * Create a **new service RulesService and its contract** 
-  
-  also in a pipeline - builder.Services.AddScoped<IRulesService, RulesService>();
-
-* **Install RulesEngine and Nito.AsyncEx.Context packages** 
-* Create a **new class Eval_TransferRules** in RulesFunctions folder in Services
+* **Configure Rules Engine Service**
+* **Install Required packages** 
+* **Create Rules-Functions Class** 
+* **Add New Account in the Context**
 
 ## **Implementation**
 We will implement above steps for Rules Engine 
@@ -1110,5 +1109,75 @@ public class RulesService : IRulesService
         }
     }
 ```
+
+### **Step 8: Configure Rules Engine Service**
+In `Program.cs` file we will inject the **IRulesService** to services container, so that we can use the relevant service.
+
+```cs
+builder.Services.AddScoped<IRulesService, RulesService>();
+```
+
+### **Step 9: Install Required packages** 
+Install the following packages from nuget package manager in the Services project
+
+```
+Nito.AsyncEx.Context
+RulesEngine
+```
+### **Step 10: Create Rules-Functions Class** 
+**Create a new class Eval_TransferRules** in the RulesFunctions folder of the Services project. This class will evaluate the required rules and return the appropriate responses  
+```cs
+ public class Eval_TransferRules
+    {
+        public static bool FromAccountIsActiveWithSufficentBalance(string AccountFromId, decimal Amount, BBBankContext context)
+        {
+            if (IsAmountValid(Amount))
+            {
+                var task = CheckActiveAndSufficentBalance(AccountFromId, Amount, context);
+                // because rules engine can only work with static function we have to use Nito.AsyncEx library to call another async static function to call DB
+                return task.WaitAndUnwrapException();
+            }
+            return false;
+        }
+        private async static Task<bool> CheckActiveAndSufficentBalance(string AccountFromId, decimal Amount, BBBankContext context)
+        {
+            var account = context.Accounts.Where(x => x.AccountNumber == AccountFromId).FirstOrDefault(); 
+                //await unitOfWork.AccountRepository.GetAsync(AccountFromId);
+            return account != null && account.AccountStatus == AccountStatus.Active && account.CurrentBalance > Amount;
+        }
+
+        public static bool ToAccountIsActive(string AccountToId, BBBankContext context)
+        {
+            var task = CheckActive(AccountToId, context);
+            return task.WaitAndUnwrapException();
+        }
+        private async static Task<bool> CheckActive(string AccountToId, BBBankContext context)
+        {
+            var account = context.Accounts.Where(x => x.AccountNumber == AccountToId).FirstOrDefault();
+                //await unitOfWork.AccountRepository.GetAsync(AccountToId);
+            return account != null && account.AccountStatus == AccountStatus.Active;
+        }
+        public static bool IsAmountValid(decimal amount)
+        {
+            return amount > 0 ? true : false;
+        }
+    }
+```
+
+### **Step 11: Add New Account in the Context**
+Add a new account object in the Accounts array of the `BBBankContext.cs` file. We can use this account as a recipient while transferring funds 
+
+```cs
+            this.Accounts.Add(new Account
+            {
+                Id = "37846734-172e-4149-8cec-6f43d1e12345",
+                AccountNumber = "0001-1002",
+                AccountTitle = "Nancy Momoland",
+                CurrentBalance = 3500M,
+                AccountStatus = AccountStatus.Active,
+                User = this.Users[0]
+            });
+```
+
 ## **Final Output**
 ![](Readme-images/5.png)
